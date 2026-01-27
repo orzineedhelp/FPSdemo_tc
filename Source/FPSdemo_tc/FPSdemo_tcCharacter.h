@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "InterFaces/OnlineSessionInterface.h"
+
 #include "FPSdemo_tcCharacter.generated.h"
 
 class UInputComponent;
@@ -90,5 +92,37 @@ public:
 	/** Returns first person camera component **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	UFUNCTION(BlueprintCallable)
+	void OpenLobby();
+
+	UFUNCTION(BlueprintCallable)
+	void CallOpenLevel(const FString& Address);
+
+	UFUNCTION(BlueprintCallable)
+	void CallClientTravel(const FString& Address);
+
+
+public:
+
+	//Online Subsystem的核心指针声明
+	IOnlineSessionPtr OnlineSessionInterface;
+
+
+protected:
+	UFUNCTION(BlueprintCallable)
+	void CreateGameSession();
+
+	UFUNCTION(BlueprintCallable)
+	void JoinGameSession();
+
+	//回调函数
+	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+	void OnFindSessionsComplete(bool bWasSuccessful);//只需反应是否查找成功
+
+private:
+
+	FOnCreateSessionCompleteDelegate CreateSessionCompleteDelegate;
+	FOnFindSessionsCompleteDelegate FindSessionsCompleteDelegate;
+	TSharedPtr<FOnlineSessionSearch> SessionSerch;
 };
 
